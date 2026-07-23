@@ -77,3 +77,15 @@ void Map::InitializeZones()
     Spaces[31].AddZone(ZoneTypes::Gray);
 }
 
+
+void Map::InitializeSecretPassage()
+{
+    Spaces[0].SetSecretPassage(true);
+    secretpass.push_back(0);
+    Spaces[9].SetSecretPassage(true);
+    secretpass.push_back(9);
+    Spaces[13].SetSecretPassage(true);
+    secretpass.push_back(13);
+    Spaces[27].SetSecretPassage(true);
+    secretpass.push_back(27);
+}

@@ -89,3 +89,26 @@ void Map::InitializeSecretPassage()
     Spaces[27].SetSecretPassage(true);
     secretpass.push_back(27);
 }
+
+
+
+vector<int> Map::GetSpeacesWithSameZones(int id)
+{
+    vector<int> result;
+    
+    const auto &TargetZones = Spaces[id].GetZones();
+
+    for(const auto &space : Spaces)
+    {
+        for(const auto &zone : TargetZones)
+        {
+            if(space.HasZone(zone))
+            {
+                result.push_back(space.GetId());
+                break;
+            }      
+        } 
+    }
+
+    return result;
+}

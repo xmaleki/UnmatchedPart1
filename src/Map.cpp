@@ -112,3 +112,80 @@ vector<int> Map::GetSpeacesWithSameZones(int id)
 
     return result;
 }
+
+
+
+void Map::CreateMap()
+{
+    InitializeSpaces();
+    InitializeZones();
+    InitializeSecretPassage();
+    CreateEdges();
+}
+
+void Map::CreateEdges()
+{
+    Adjacent.resize(32);
+    AddEdge(0,1);
+    AddEdge(0,10);
+    AddEdge(10,11);
+    AddEdge(10,18);
+    AddEdge(18,19);
+    AddEdge(18,21);
+
+    AddEdge(21,22);
+    AddEdge(21,27);
+    AddEdge(27,28);
+    AddEdge(28,29);
+    AddEdge(1,2);
+
+    AddEdge(12,2);
+    AddEdge(12,11);
+    AddEdge(12,19);
+    AddEdge(22,20);
+    AddEdge(20,23);
+    AddEdge(23,30);
+
+    AddEdge(23,30);
+    AddEdge(24,30);
+    AddEdge(13,20);
+    AddEdge(13,14);
+    AddEdge(2,3);
+
+    AddEdge(4,3);
+    AddEdge(5,4);
+    AddEdge(5,3);
+    AddEdge(5,6);
+    AddEdge(4,6);
+
+    AddEdge(7,6);
+    AddEdge(8,6);
+    AddEdge(7,9);
+    AddEdge(14,15);
+    AddEdge(14,16);
+
+
+    AddEdge(17,16);
+    AddEdge(15,17);
+    AddEdge(17,26);
+    AddEdge(31,26);
+    AddEdge(25,26);
+
+    AddEdge(25,24);
+    AddEdge(25,14);
+    AddEdge(24,14);
+    AddEdge(23,24);
+
+    AddEdge(29,23);
+
+
+    AddEdge(7,8);
+
+    AddEdge(25,31);
+
+    AddEdge(29,30);
+
+    AddEdge(14,6);
+
+    AddEdge(8,16);
+}

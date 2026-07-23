@@ -189,3 +189,21 @@ void Map::CreateEdges()
 
     AddEdge(8,16);
 }
+
+
+const vector<int>& Map::GetAdjacents(int id) const
+{
+    return Adjacent[id];
+}
+
+
+const Space& Map::GetSpace(int id) const
+{
+    return Spaces[id];
+}
+
+
+const vector<int>& Map::GetSecretPassages() const
+{
+    return secretpass;
+}

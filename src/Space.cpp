@@ -34,3 +34,23 @@ bool Space::IsHeroAvailable() const
 {
     return !(hero == nullptr);
 }
+
+void Space::AddZone(ZoneTypes zone)
+{
+    zones.push_back(zone);
+}
+
+void Space::AddNeighbor(Space* neighbor)
+{
+    AdjacentSpaces.push_back(neighbor);
+}
+
+bool Space::HasZone(const ZoneTypes &zone) const
+{
+    for(const auto &z : zones)
+    {
+        if(z == zone)
+            return true;
+    }
+    return false;
+}

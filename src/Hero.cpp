@@ -31,3 +31,29 @@ bool Hero::IsDead() const
 {
     return HP <= 0;
 }
+
+void Hero::TakeDamage(int dam)
+{
+    HP -= dam;
+    if(HP < 0)
+        HP = 0;
+}
+
+void Hero::Heal(int heal)
+{
+    HP += heal;
+    
+    if(HP >= MaxHP)
+        HP = MaxHP;
+}
+
+CardOwner Hero::GetOwnerType() const
+{
+    return OwnerType;
+}
+
+
+int Hero::GetHP() const
+{
+    return HP;
+}

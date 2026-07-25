@@ -99,3 +99,24 @@ void Board::SetHeroLocation(int HeroId, int SpaceId)
     LocationOfHeroes[SpaceId] = HeroId;
     HeroPositions[HeroId] = SpaceId;
 }
+
+
+int Board::GetHeroLocation(int HeroId) const
+{
+    if(HeroPositions.count(HeroId))
+    {
+        return HeroPositions.at(HeroId);
+    }
+    return -1;
+}
+
+
+Hero* Board::GetHeroById(int HeroId) const
+{
+    auto it = HeroesById.find(HeroId);
+
+    if(it != HeroesById.end())
+        return it->second;
+
+    return nullptr;
+}   

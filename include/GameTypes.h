@@ -61,3 +61,45 @@ enum class CardOwner
     Sisters,
     Any
 };
+
+
+
+struct CombatContext
+{
+    Player* AttackerPlayer;
+    Player* DefenderPlayer;
+    Hero* Attacker;
+    Hero* Defender;
+
+    int AttackValue;
+    int DefenseValue;
+
+    Board& board;
+    Map& map;
+    Movement& movement;
+
+    Card* AttackCard = nullptr;
+    Card* DefenseCard = nullptr;
+
+    bool AttackerWin = false;
+    bool CancelOpponentEffects = false;
+};
+
+
+
+struct SchemeContext
+{
+    Player *player = nullptr;
+    Hero *hero = nullptr;
+
+    Board &board;
+    Map &map;
+    Movement &movement;
+
+    int *ActionsRemain = nullptr;
+
+    TerminalView& terminalview;
+
+    Player* OpponentPlayer = nullptr;
+  //  Hero* OpponentHero = nullptr;
+};

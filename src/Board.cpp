@@ -45,3 +45,31 @@ int Board::GetOccupiedHeroId(int SpaceId) const
 
     return -1;
 }
+
+
+bool Board::IsOccupiedByTeammate(int SpaceId , int MovingHeroId) const
+{
+    if(!IsOccupied(SpaceId))
+        return false;
+
+    int OccupantHeroId = GetOccupiedHeroId(SpaceId);
+    
+    if(OccupantHeroId == MovingHeroId)
+        return false;
+
+    return GetTeamOfHero(OccupantHeroId) == GetTeamOfHero(MovingHeroId);
+}
+
+bool Board::IsOccupiedByEnemy(int SpaceId, int MovingHeroId) const
+{
+    if(!IsOccupied(SpaceId))
+        return false;
+    
+    int OccupantHeroId = GetOccupiedHeroId(SpaceId);
+
+    if(OccupantHeroId == MovingHeroId)
+        return false;
+
+    return GetTeamOfHero(OccupantHeroId) != GetTeamOfHero(MovingHeroId);
+
+}

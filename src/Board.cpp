@@ -120,3 +120,28 @@ Hero* Board::GetHeroById(int HeroId) const
 
     return nullptr;
 }   
+
+
+Hero* Board::GetHeroBySpace(int Space) const
+{
+    auto it = LocationOfHeroes.find(Space);
+
+    if(it == LocationOfHeroes.end())
+        return nullptr;
+
+    return GetHeroById(it->second);
+}
+
+
+vector<int> Board::GetAvailableSpace()
+{
+    vector<int> Spaces;
+
+    for(int i = 0; i < 32; i++)
+    {
+        if(!IsOccupied(i))
+            Spaces.push_back(i);
+    }
+
+    return Spaces;
+}

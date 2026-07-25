@@ -73,3 +73,29 @@ bool Board::IsOccupiedByEnemy(int SpaceId, int MovingHeroId) const
     return GetTeamOfHero(OccupantHeroId) != GetTeamOfHero(MovingHeroId);
 
 }
+
+
+HeroesTeam Board::GetTeamOfHero(int HeroId) const
+{
+    const Hero* hero = HeroesById.at(HeroId);
+    
+    if(hero != nullptr)
+        return hero->GetTeam();
+    else
+        return HeroesTeam::WITHOUTTEAM;
+}
+
+
+void Board::SetHeroLocation(int HeroId, int SpaceId)
+{
+    if(HeroPositions.count(HeroId))
+    {
+        int old = HeroPositions[HeroId];
+        if(LocationOfHeroes.count(old) && LocationOfHeroes[old] == HeroId)
+        {
+            LocationOfHeroes.erase(old);
+        }
+    }
+    LocationOfHeroes[SpaceId] = HeroId;
+    HeroPositions[HeroId] = SpaceId;
+}

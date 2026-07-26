@@ -449,3 +449,36 @@ void Dash::ApplyAfterCombat(CombatContext &context)
     cout<<"[Dash] "<<hero->GetName()<<" moved from "<<current<<" to "<<dashmovement[choice - 1]<<".\n";
     
 }
+
+Exploit::Exploit(): Card("Exploit", CardType::Versatile, 4, 1, Timing::AfterCombat,
+        "AFTER COMBAT: Draw 1 card.", CardOwner::Any)
+{}
+
+void Exploit::ApplyAfterCombat(CombatContext& context)
+{
+    Deck* deck = context.AttackerPlayer->GetDeck();
+
+    if(deck->IsEmpty(context.AttackerPlayer->GetHero()->GetTeam()))
+    {
+        context.AttackerPlayer->GetHero()->TakeDamage(2);
+        
+        //vector<unique_ptr<Hero>> sidekick;
+        auto& sidekick = context.AttackerPlayer->GetSideKicks();
+
+        for(auto& hero: sidekick)
+        {
+            hero->TakeDamage(2);
+        }
+
+        cout<<"[Exploit] Deck empty. drew not success.\n";
+
+        return;
+    }
+
+    unique_ptr<Card> drawn = deck->DrawCard(context.AttackerPlayer->GetHero()->GetTeam());
+
+    context.AttackerPlayer->AddCardToHand(move(drawn));
+
+    cout<<"[Exploit] "<<context.AttackerPlayer->GetName()<<" drew 1 card after combat.\n";
+}
+

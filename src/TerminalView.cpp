@@ -135,3 +135,44 @@ void TerminalView::displayAsciiMap() const
         cout << '\n';
     }
 }
+
+string TerminalView::GetHeroSymbol(int heroId) const
+{
+    if (heroId == 1) return "D"; //Dracula
+    if (heroId == 5) return "H"; //Holmes
+    if (heroId == 6) return "W"; //Watson
+    if (heroId >= 2 && heroId <= 4) return "S";
+    return " ";
+}
+
+void TerminalView::drawLine(vector<string>& canvas, Point p1, Point p2) const
+{
+    int x1 = p1.x, y1 = p1.y;
+    int x2 = p2.x, y2 = p2.y;
+
+    int dx = abs(x2 - x1), sx = x1 < x2 ? 1 : -1;
+    int dy = -abs(y2 - y1), sy = y1 < y2 ? 1 : -1;
+    int err = dx + dy;
+
+    while (true)
+    {
+        if (!(x1 == p1.x && y1 == p1.y) && !(x1 == x2 && y1 == y2))
+        {
+            if (x1 > 0 && x1 < MAP_WIDTH - 1 && y1 > 0 && y1 < MAP_HEIGHT - 1)
+            {
+                if (canvas[y1][x1] == ' ') canvas[y1][x1] = '.';
+            }
+        }
+
+        if (x1 == x2 && y1 == y2)
+            break;
+
+        int e2 = 2 * err;
+
+        if (e2 >= dy)
+            { err += dy; x1 += sx; }
+
+        if (e2 <= dx)
+            { err += dx; y1 += sy; }
+    }
+}

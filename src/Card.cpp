@@ -107,3 +107,35 @@ string Card::ToStringOwner(CardOwner owner) const
     }
 
 }
+
+FeedingFrenzy::FeedingFrenzy():Card("Feeding Frenzy", CardType::Attack, 2, 3, Timing::DuringCombat, 
+        "DURING COMBAT: This card's value is +1 for each Sister in the same zone as the opposing fighter.", CardOwner::Dracula)
+{}
+
+
+void FeedingFrenzy::ApplyDuringCombat(CombatContext &context)
+{
+    int TargetSpace = context.board.GetHeroLocation(context.Defender->GetId());
+    const auto& TargetZones = context.map.GetSpace(TargetSpace).GetZones();
+    int count = 0;
+
+    // khahar ha
+    for(const auto& Hero : context.AttackerPlayer->GetAliveHeroes())
+    {
+        if(Hero->GetName() != "Sister")
+            continue;
+        if(Hero->IsDead())
+            continue;
+
+        int SisterSpace = context.board.GetHeroLocation(Hero->GetId());
+        const auto& SisterZones = context.map.GetSpace(SisterSpace).GetZones();
+
+        for(auto tz : TargetZones)
+            for(auto sz : SisterZones)
+                if(tz == sz)
+                    count++;
+    }
+
+    context.AttackValue += count;
+}
+

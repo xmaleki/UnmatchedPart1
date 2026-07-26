@@ -44,3 +44,13 @@ const map<ZoneTypes, string> zoneColorMap =
     {ZoneTypes::DarkBlue, Color::DarkBlue},   {ZoneTypes::Purple, Color::Purple},
     {ZoneTypes::Gray, Color::Gray}
 };
+
+TerminalView::TerminalView(const Map& m, const Board& b) : map(m), board(b) {}
+
+void TerminalView::display() const
+{
+    cout << "=============== ASCII MAP ===============\n";
+    displayAsciiMap();
+    cout << "Space with * is Secret Passage\n";
+    cout << "=========================================\n" << endl;
+}

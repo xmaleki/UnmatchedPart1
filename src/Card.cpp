@@ -139,3 +139,49 @@ void FeedingFrenzy::ApplyDuringCombat(CombatContext &context)
     context.AttackValue += count;
 }
 
+
+MistForm::MistForm() : Card("Mistform", CardType::Scheme, 0, 2, Timing::Event,
+        "Place Dracula in any space. Gain 1 action.", CardOwner::Dracula)
+{}
+
+void MistForm::ApplyScheme(SchemeContext& schemecontext)
+{   
+    schemecontext.terminalview.display();
+
+    auto Available = schemecontext.board.GetAvailableSpace();
+    if(Available.empty())
+    {
+        cout<<"[MistForm] No valid spaces.\n";
+        return;
+    }
+
+    cout<<"[MistForm] Choose a space to place Dracula\n";
+    for(int i = 0; i < Available.size(); i++)
+    {
+        cout<<i + 1<<") Space"<<Available[i]<<"\t";
+
+        if((i + 1) % 6 == 0)
+            cout<<endl;
+    }
+    
+    cout<<"Enter your choice: ";
+    int choice;
+    while (true)
+    {
+        cin>>choice;
+        if(choice < 1 || choice > Available.size())
+        {
+            cout<<"[MistForm] Invalid choice.\nEnter again: ";
+            cin>>choice;
+        }
+        else
+            break;
+    }
+
+    schemecontext.board.SetHeroLocation(schemecontext.hero->GetId(), Available[choice - 1]);
+    
+    cout<<"[MistForm] Dracula moved to space "<<Available[choice - 1]<<".\n";
+
+    (*schemecontext.ActionsRemain)++;
+    cout<<"[MistForm] You gained +1 action.\n";
+}

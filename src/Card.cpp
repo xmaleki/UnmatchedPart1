@@ -398,3 +398,54 @@ void Beastform::ApplyDuringCombat(CombatContext &context)
 
 }
 
+
+Dash::Dash(): Card("Dash", CardType::Versatile, 3, 1, Timing::AfterCombat,
+        "AFTER COMBAT: Move your fighter up to 3 spaces.", CardOwner::Any)
+{}
+
+
+void Dash::ApplyAfterCombat(CombatContext &context)
+{
+    Hero* hero = nullptr;
+
+    if(context.DefenseCard == this)
+        hero = context.Defender;
+    else
+        hero = context.Attacker;
+
+    vector<int> dashmovement = context.movement.GetAvailableMove(3, hero->GetId());
+
+    int counter = 1;
+    int current = context.board.GetHeroLocation(hero->GetId());
+    
+    if(hero->IsDead())
+    {
+        cout<<"[Dash] Your hero is dead.\n";
+        return;
+    }
+
+    cout<<"[Dash] Move your fighter up to 3 spaces.\n";
+    for(auto& move : dashmovement)
+    {
+        cout<<counter<<") space "<<move<<"\t";
+        counter++;
+    }
+
+    int choice;
+    cout<<"\nEnter your choice: ";
+    while (true)
+    {
+        cin>>choice;
+        if(choice < 1 || choice > dashmovement.size())
+        {
+            cout<<"Invalid choice. Enter again: ";
+        }
+        else
+            break;
+    }
+
+    context.board.SetHeroLocation(hero->GetId(), dashmovement[choice - 1]);
+
+    cout<<"[Dash] "<<hero->GetName()<<" moved from "<<current<<" to "<<dashmovement[choice - 1]<<".\n";
+    
+}

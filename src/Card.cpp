@@ -482,3 +482,24 @@ void Exploit::ApplyAfterCombat(CombatContext& context)
     cout<<"[Exploit] "<<context.AttackerPlayer->GetName()<<" drew 1 card after combat.\n";
 }
 
+
+
+LookIntoMyEyes::LookIntoMyEyes() : Card("Look Into My Eyes", CardType::Defence, 1, 2, Timing::DuringCombat,
+        "DURING COMBAT: Add the BOOST value from your opponent's attack card to the defense value of this card.", CardOwner::Dracula)
+{}
+
+void LookIntoMyEyes::ApplyDuringCombat(CombatContext& context)
+{
+    Card* attackercard = context.AttackCard;
+
+    if(!attackercard)
+    {
+        cout<<"[Look Into My Eyes] No opponent attack card.\n";
+        return;
+    }
+
+    context.DefenseValue = attackercard->GetBoost() + context.DefenseCard->GetValue();
+
+    cout<<"[Look Into My Eyes] Added opponent Boost ("<<attackercard->GetBoost()<<") to defense.\n[Look Into My Eyes] New defense = "<<context.DefenseValue<<endl;
+
+}

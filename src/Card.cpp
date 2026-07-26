@@ -312,3 +312,89 @@ void BaptismOfBlood::ApplyScheme(SchemeContext &context)
 
 
 }
+
+Beastform::Beastform(): Card("Beastform", CardType::Attack, 6, 4, Timing::DuringCombat,
+        "DURING COMBAT: You may discard any number of cards from your hand. This card's value is +1 for each card you discard.", CardOwner::Dracula)
+{}
+
+
+void Beastform::ApplyDuringCombat(CombatContext &context)
+{
+    auto &hand = context.AttackerPlayer->GetHand();
+
+    if(hand.empty())
+    {
+        cout<<"[Beastform] You have no cards to discard!\n";
+        return;
+    }
+
+    cout<<"[Beastform] Choose cards to discard.\n";
+
+    int counter = 0;
+    while(counter < hand.size())
+    {
+        cout<<counter + 1<<") "<<hand[counter]->GetName()<<" (Boost: "<<hand[counter]->GetBoost()<<")\t";
+        counter++;
+    }
+
+    vector<int> choices;
+    int x;
+    counter++;
+
+    cout<<counter<<") "<<"exit\n";
+
+    cout<<"Enter card number: ";
+    cin>>x;
+
+    while(choices.size() <= hand.size())
+    {
+        if(x == counter)
+            break;
+        
+        if(x >= 1 && x <= hand.size())
+        {
+            if(find(choices.begin(), choices.end(), x) != choices.end())
+            {
+                cout<<"You entered this card before.\n";
+            }
+            else
+            {
+                choices.push_back(x);
+                sort(choices.begin(), choices.end());
+                //choices.erase(unique(choices.begin(), choices.end()), choices.end());
+
+            }
+            cout<<"You enter card number "<< x <<endl<<"Enter new choice: ";
+        }
+        else
+        {
+            cout<<"Invalid choice.\n";
+        }
+        cin>>x;
+    }
+
+    vector<Card*> ToDiscard;
+
+    for(int c : choices)
+    {
+        if(c >= 1 && c <= hand.size())
+        {
+            ToDiscard.push_back(hand[c - 1].get());
+        }
+    }
+
+
+    int count = ToDiscard.size();
+
+    for(Card* c : ToDiscard)
+    {
+        context.AttackerPlayer->DiscardCardFromHand(c);
+    }
+
+    context.AttackValue += count;
+
+    cout<<"[Beastform] Discarded "<<count<<" cards. Attack +"<<count<<".\n";
+    cout<<"New attack value = "<<context.AttackValue<<"\n";
+
+}
+

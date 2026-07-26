@@ -185,3 +185,34 @@ void MistForm::ApplyScheme(SchemeContext& schemecontext)
     (*schemecontext.ActionsRemain)++;
     cout<<"[MistForm] You gained +1 action.\n";
 }
+
+Ambush::Ambush():Card("Ambush", CardType::Attack, 2, 3, Timing::DuringCombat,
+        "DURING COMBAT: Your opponent discards 1 random card. Add its BOOST value to this card's attack value.",
+        CardOwner::Any)
+{}
+
+void Ambush::ApplyDuringCombat(CombatContext &context)
+{
+    if(context.DefenderPlayer->GetHandSize() == 0)
+    {
+        cout<<"[Ambush] Opponent has no cards to discard.\n";
+        return;
+    }
+
+    random_device rd;
+    mt19937 generator(rd());
+    uniform_int_distribution<int> RandGen(0, context.DefenderPlayer->GetHandSize() - 1);
+
+    int DefenderRandomCardIndex = RandGen(generator);
+    
+    Card* RandomCardHand = context.DefenderPlayer->GetCardFromHand(DefenderRandomCardIndex);
+    
+    cout<<"[Ambush] Random card is "<< RandomCardHand->GetName()<<" and boost value is "<<RandomCardHand->GetBoost()<<"\n";
+
+    context.AttackValue = RandomCardHand->GetBoost() + context.AttackCard->GetValue();
+
+    context.DefenderPlayer->DiscardCardFromHand(RandomCardHand);
+
+    cout<<"[Ambush] The opponent discards a card. The boost value of that card is added to the attack value.\n";
+    cout<<"Attack is now "<<context.AttackValue<<".\n";
+}

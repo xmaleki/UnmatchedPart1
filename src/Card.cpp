@@ -537,3 +537,102 @@ void PreyUpon::ApplyScheme(SchemeContext& context)
     }
 }
 
+
+
+RaveningSeduction::RaveningSeduction() : Card("Ravening Seduction", CardType::Scheme, 0, 2, Timing::Event,
+        "Move any fighter up to 2 spaces. After moving, deal 1 damage to the moved fighter for each Sister adjacent to them.", CardOwner::Sisters)
+{}
+
+void RaveningSeduction::ApplyScheme(SchemeContext& context)
+{
+    vector<Hero*> AllHeroes;
+
+    for(auto& h : context.player->GetAliveHeroes())
+        AllHeroes.push_back(h);
+
+    for(auto& h : context.OpponentPlayer->GetAliveHeroes())
+        AllHeroes.push_back(h);
+
+    context.terminalview.display();
+
+    cout<<"Available hero:\n";
+    for(int i = 0; i < AllHeroes.size(); i++ )
+    {
+        cout<<i+1<<") "<<AllHeroes[i]->GetName()<<"\t";
+    }
+
+    cout<<"\nChoose a hero to move: ";
+    int choice;
+    cin>>choice;
+
+    while(choice < 1 || choice > AllHeroes.size())
+    {
+        cout<<"Invalid choice. Enter again: ";
+        cin>>choice;
+    }
+
+
+    Hero* target = AllHeroes[choice - 1];
+    //int TargetLocation = context.board.GetHeroLocation(target->GetId());
+    
+  //  cout << "Target ID = " << target->GetId() << endl;
+   // cout << "TargetLocation = " << TargetLocation << endl;
+
+    
+    auto moves = context.movement.GetAvailableMove(2, target->GetId());
+
+    if(moves.empty())
+    {
+        cout<<"No available spaces.\n";
+        return;
+    }
+
+    cout<<"Available space\n";
+
+    for(int i = 0; i < moves.size(); i++)
+        cout<<i+1<<") Space "<<moves[i]<<"\t";
+    
+    cout<<"\nChoose destination: ";
+
+    int destchoice;
+    cin>>destchoice;
+    
+    while(destchoice < 1 || destchoice > moves.size())
+    {
+        cout<<"Invalid destination. Enter again: ";
+        cin>>destchoice;
+    }
+
+    int dest = moves[destchoice - 1];
+
+    context.board.SetHeroLocation(target->GetId(), dest);
+
+    auto adj = context.map.GetAdjacents(dest);
+    int damage = 0;
+    for(auto space : adj)
+    {
+        if(context.board.IsOccupied(space))
+        {
+            Hero* h = context.board.GetHeroBySpace(space);
+            if(h->GetName() == "Sister")
+                damage++;
+        }
+    }
+
+    target->TakeDamage(damage);
+    cout<<"[Ravening Seduction] " << target->GetName()<< " Moved and get " << damage << " damage from adjacent sisters.\n";
+
+
+
+
+    cout << "AFTER CARD SET:" << endl;
+
+    cout << "Hero pos: "
+    << context.board.GetHeroLocation(target->GetId())
+    << endl;
+
+    cout << "Occupied: "
+    << context.board.GetOccupiedHeroId(dest)
+    << endl;
+
+}

@@ -690,3 +690,14 @@ void ThirstForSustenance::ApplyAfterCombat(CombatContext& context)
     cout<<"[Thirst For Sustenance] Dracula moved to space "<<AvailableAdjacent[choice - 1]<<".\n";
 
 }
+
+Feint::Feint(): Card("Feint", CardType::Versatile, 2, 2, Timing::Immediately,
+        "IMMEDIATELY: Cancel all effects on your opponent's card.", CardOwner::Any)
+{}
+
+void Feint::ApplyImmediately(CombatContext& context)
+{
+    context.CancelOpponentEffects = true;
+
+    cout<<"[Feint] Cancel opponent's card effects.\n";
+}

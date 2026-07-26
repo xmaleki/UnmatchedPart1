@@ -636,3 +636,57 @@ void RaveningSeduction::ApplyScheme(SchemeContext& context)
     << endl;
 
 }
+
+ThirstForSustenance::ThirstForSustenance(): Card("Thirst for Sustenance", CardType::Attack, 3, 3, Timing::AfterCombat,
+        "AFTER COMBAT: If you won the combat, place Dracula in any space adjacent to the opposing fighter.", CardOwner::Sisters)
+{}
+
+void ThirstForSustenance::ApplyAfterCombat(CombatContext& context)
+{
+    if(!context.AttackerWin)
+    {
+        cout<<"[Thirst For Sustenance] Combat lost. No effect!\n";
+        return;
+    }
+    
+    vector<int> AdjacentDefender = context.map.GetAdjacents(context.board.GetHeroLocation(context.Defender->GetId()));
+
+    vector<int> AvailableAdjacent;
+    
+    for(auto adj : AdjacentDefender)
+    {
+        if(!context.board.IsOccupied(adj))
+            AvailableAdjacent.push_back(adj);   
+    }
+
+    if(AvailableAdjacent.empty())
+    {
+        cout<<"[Thirst For Sustenance] No Adjacent spaces available!\n";
+        return;
+    }
+
+    cout<<"[Thirst For Sustenance] adjacent space\n";
+    int counter = 1;
+    for(int space : AvailableAdjacent)
+    {
+        cout<<counter<<") "<<space<<"\t";
+        counter++;
+    }
+    
+    cout<<"\nEnter your choice: ";
+    int choice;
+    while (true)
+    {
+        cin>>choice;
+        if(choice < 0 || choice > AvailableAdjacent.size())
+        {
+            cout<<"Invalid choice. Try again: ";
+        }
+        else
+            break;
+    }
+
+    context.board.SetHeroLocation(context.AttackerPlayer->GetHero()->GetId() ,AvailableAdjacent[choice - 1]);
+    cout<<"[Thirst For Sustenance] Dracula moved to space "<<AvailableAdjacent[choice - 1]<<".\n";
+
+}

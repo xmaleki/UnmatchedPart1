@@ -31,3 +31,16 @@ class Card
         virtual void ApplyAfterCombat(CombatContext&) {};
         virtual void ApplyScheme(SchemeContext&) {};
 };
+
+
+class FeedingFrenzy : public Card
+{
+    private:
+
+
+    public:
+        FeedingFrenzy();
+
+        void ApplyDuringCombat(CombatContext&) override;
+};
+

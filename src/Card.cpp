@@ -216,3 +216,99 @@ void Ambush::ApplyDuringCombat(CombatContext &context)
     cout<<"[Ambush] The opponent discards a card. The boost value of that card is added to the attack value.\n";
     cout<<"Attack is now "<<context.AttackValue<<".\n";
 }
+
+
+BaptismOfBlood::BaptismOfBlood() : Card("Baptism of Blood", CardType::Scheme, 0, 2, Timing::Event,
+        "Recover 2 health. Return a defeated Sister (if any) to any space in Dracula's zone.", CardOwner::Dracula)
+{}
+
+
+void BaptismOfBlood::ApplyScheme(SchemeContext &context)
+{
+    context.hero->Heal(2);
+
+    vector<Hero*> DeadSisters;
+
+    
+    for(auto &sk : context.player->GetSideKicks())
+    {
+        if(sk->GetName() == "Sister" && sk->IsDead())
+        {
+            DeadSisters.push_back(sk.get());
+        }
+    }
+
+    if(DeadSisters.empty())
+    {
+        cout<<"[Baptism Of Blood] There is no dead sister.\n";
+        return;
+    }
+    
+    int schoice = 1;
+    if(DeadSisters.size() > 1)
+    {
+        for(int i = 0; i < DeadSisters.size(); i++)
+        {
+            cout<<i + 1<<") "<<DeadSisters[i]->GetName()<<"\t";
+        }
+
+        cout<<"\nEnter choice: ";
+        cin>>schoice;
+
+        while(schoice < 1 || schoice > DeadSisters.size())
+        {
+            cout<<"Invalid choice. Enter again: ";
+            cin>>schoice;
+        }
+    }
+
+    
+    int DraculaSpace = context.board.GetHeroLocation(context.hero->GetId());
+    
+    auto SameZoneSpaces = context.map.GetSpeacesWithSameZones(DraculaSpace);
+
+    vector<int> AvailableSpaces;
+
+    int counter = 1;
+    bool PrintGetSpace = true;
+
+    for(int space : SameZoneSpaces)
+    {
+        if(!context.board.IsOccupied(space))
+        {
+            if(PrintGetSpace)
+            {
+                cout<<"Available spaces\n";
+                PrintGetSpace = false;
+            }
+            cout<<counter<<") Space "<<space<<"\t";
+            counter++;
+            AvailableSpaces.push_back(space);
+        }
+    }
+    
+    cout<<"\nEnter your choice: ";
+
+    int choice;
+    cin>>choice;
+    while (true)
+    {
+        if(choice < 1 || choice > AvailableSpaces.size())
+        {
+            cout<<"Invalid choice.\nEnter again: ";
+            cin>>choice;
+        }
+        else
+            break;
+
+    }
+    
+    DeadSisters[schoice - 1]->Heal(1);
+
+    //cout<<"\ndead sister id: "<<DeadSisters[schoice - 1]->GetId()<<endl;
+
+    context.board.SetHeroLocation(DeadSisters[schoice - 1]->GetId(), AvailableSpaces[choice - 1]);
+    cout<<"[Baptism Of Blood] Dead sister now alive and placed in "<<AvailableSpaces[choice - 1]<<".\n";
+
+
+}

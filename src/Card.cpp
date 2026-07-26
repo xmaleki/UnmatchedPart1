@@ -503,3 +503,37 @@ void LookIntoMyEyes::ApplyDuringCombat(CombatContext& context)
     cout<<"[Look Into My Eyes] Added opponent Boost ("<<attackercard->GetBoost()<<") to defense.\n[Look Into My Eyes] New defense = "<<context.DefenseValue<<endl;
 
 }
+
+PreyUpon::PreyUpon() : Card("Prey Upon", CardType::Scheme, 0, 4, Timing::Event,
+        "Deal 1 damage to all opposing fighters adjacent to Dracula. Dracula recovers 1 health for each damage dealt.", CardOwner::Dracula)
+{}
+
+
+void PreyUpon::ApplyScheme(SchemeContext& context)
+{
+    int DraculaSpace = context.board.GetHeroLocation(context.hero->GetId());
+
+    auto AdjacentDracula = context.map.GetAdjacents(DraculaSpace);
+    
+    int counter = 0;
+    for(auto adj : AdjacentDracula)
+    {
+        if(context.board.IsOccupiedByEnemy(adj, context.hero->GetId()))
+        {
+            context.board.GetHeroBySpace(adj)->TakeDamage(1);
+            context.hero->Heal(1);
+            counter++;
+        }
+    }
+
+    if(counter == 0)
+    {
+        cout<<"[Prey Upon] No adjacent enemies.\n";
+        return;
+    }
+    else
+    {
+        cout<<"[Prey Upon] Take "<<counter<<" damage to enemies and Dracula heal "<<counter<<".\n";
+    }
+}
+

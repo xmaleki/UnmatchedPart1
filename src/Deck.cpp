@@ -64,3 +64,56 @@ void Deck::Shuffle(HeroesTeam heroteam)
         shuffle(SherlockDeck.begin(), SherlockDeck.end(), rng);
     }
 }
+
+void Deck::CreateSherlockDeck()
+{
+    // Emdad resani
+    AddCard(make_unique<AdministerAid>(), HeroesTeam::SHERLOCK);
+    AddCard(make_unique<AdministerAid>(), HeroesTeam::SHERLOCK);
+
+    // zed hamle
+    AddCard(make_unique<Counterpunch>(), HeroesTeam::SHERLOCK);
+    AddCard(make_unique<Counterpunch>(), HeroesTeam::SHERLOCK);
+    AddCard(make_unique<Counterpunch>(), HeroesTeam::SHERLOCK);
+
+    // estentaj esteratejic
+    AddCard(make_unique<DeduceStrategy>(), HeroesTeam::SHERLOCK);
+    AddCard(make_unique<DeduceStrategy>(), HeroesTeam::SHERLOCK);
+    AddCard(make_unique<DeduceStrategy>(), HeroesTeam::SHERLOCK);
+
+    // Amozesh hargez payan nadarad
+    AddCard(make_unique<EducationNeverEnds>(), HeroesTeam::SHERLOCK);
+    AddCard(make_unique<EducationNeverEnds>(), HeroesTeam::SHERLOCK);
+    AddCard(make_unique<EducationNeverEnds>(), HeroesTeam::SHERLOCK);
+
+    // hazf na momken ha
+    AddCard(make_unique<EliminateTheImpossible>(), HeroesTeam::SHERLOCK);
+    AddCard(make_unique<EliminateTheImpossible>(), HeroesTeam::SHERLOCK);
+
+    // farib
+    AddCard(make_unique<Feint>(), HeroesTeam::SHERLOCK);
+    AddCard(make_unique<Feint>(), HeroesTeam::SHERLOCK);
+    AddCard(make_unique<Feint>(), HeroesTeam::SHERLOCK);
+
+    // noghte ei sabet dar zamane ei motoghayer
+    AddCard(make_unique<FixedPointInAChangingAge>(), HeroesTeam::SHERLOCK);
+    AddCard(make_unique<FixedPointInAChangingAge>(), HeroesTeam::SHERLOCK);
+
+    // ostad taghir chehre
+    AddCard(make_unique<MasterOfDisguise>(), HeroesTeam::SHERLOCK);
+    AddCard(make_unique<MasterOfDisguise>(), HeroesTeam::SHERLOCK);
+
+    // bazi shoro shode ast
+    AddCard(make_unique<TheGameIsAfoot>(), HeroesTeam::SHERLOCK);
+    AddCard(make_unique<TheGameIsAfoot>(), HeroesTeam::SHERLOCK);
+
+    // selah kamari
+    AddCard(make_unique<ServiceRevolver>(), HeroesTeam::SHERLOCK);
+    AddCard(make_unique<ServiceRevolver>(), HeroesTeam::SHERLOCK);
+
+    // ravesh haye motalee
+    AddCard(make_unique<StudyMethods>(), HeroesTeam::SHERLOCK);
+    AddCard(make_unique<StudyMethods>(), HeroesTeam::SHERLOCK);
+
+}
+

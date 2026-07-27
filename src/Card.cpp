@@ -1007,3 +1007,58 @@ void EducationNeverEnds::ApplyAfterCombat(CombatContext& context)
     }
 }
 
+
+EliminateTheImpossible::EliminateTheImpossible() : Card("Eliminate the Impossible", CardType::Scheme, 0, 2, Timing::Event,
+    "Choose an opponent. Look at their hand and choose 1 card for them to discard.", CardOwner::SherlockHolmes)
+{}
+
+
+void EliminateTheImpossible::ApplyScheme(SchemeContext& context)
+{
+    auto& OpponentHand = context.OpponentPlayer->GetHand();
+
+    if(OpponentHand.empty())
+    {
+        cout<<"[Eliminate the Impossible] Opponent has no cards.\n";
+
+        Deck* deck = context.OpponentPlayer->GetDeck();
+
+        if(deck->IsEmpty(context.OpponentPlayer->GetHero()->GetTeam()))
+        {
+            context.OpponentPlayer->GetHero()->TakeDamage(2);
+            
+            //vector<unique_ptr<Hero>> sidekick;
+            auto& sidekick = context.OpponentPlayer->GetSideKicks();
+
+            for(auto& hero: sidekick)
+            {
+                hero->TakeDamage(2);
+            }
+        }
+        return;
+    }
+
+    cout<<"[Eliminate the Impossible] Opponent hand:\n";
+
+    for(int i = 0; i < OpponentHand.size(); i++)
+    {
+        cout<<i + 1<<") "<<OpponentHand[i]->GetName()<<"\t";
+    }
+
+    cout<<"\nEnter your choice: ";
+    int choice;
+    cin>>choice;
+
+    while(choice < 1 || choice > OpponentHand.size())
+    {
+        cout<<"Invalid choice. Enter again: ";
+        cin>>choice;
+    }
+
+    string DiscardCardName = OpponentHand[choice - 1]->GetName();
+    context.OpponentPlayer->DiscardCardFromHand(OpponentHand[choice - 1].get());
+
+    cout<<"[Eliminate the Impossible] Opponent discarded: "<<DiscardCardName<<"\n";
+}
+
+

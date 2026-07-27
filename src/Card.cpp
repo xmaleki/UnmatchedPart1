@@ -1200,3 +1200,7 @@ void TheGameIsAfoot::ApplyAfterCombat(CombatContext& context)
     context.board.SetHeroLocation(context.Attacker->GetId(), AvailableMoves[choice - 1]);
     cout<<"[The Game Is Afoot] Holmes moved to space "<<AvailableMoves[choice - 1]<<".\n";
 }
+
+ServiceRevolver::ServiceRevolver(): Card("Service Revolver", CardType::Attack, 5, 3, Timing::AfterCombat,
+    "", CardOwner::DrWatson)
+{}

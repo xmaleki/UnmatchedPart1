@@ -1166,3 +1166,37 @@ void MasterOfDisguise::ApplyScheme(SchemeContext& context)
 
     cout<<"[Master of Disguise] Holmes swapped spaces with "<<EnemyHero->GetName()<<" and dealt 1 damage.\n";
 }
+
+TheGameIsAfoot::TheGameIsAfoot(): Card("The Game is Afoot", CardType::Attack, 5, 2, Timing::AfterCombat,
+    "AFTER COMBAT: Move Holmes up to 3 spaces.", CardOwner::SherlockHolmes)
+{}
+
+void TheGameIsAfoot::ApplyAfterCombat(CombatContext& context)
+{
+
+    vector<int> AvailableMoves = context.movement.GetAvailableMove(3, context.Attacker->GetId());
+    if(AvailableMoves.empty())
+    {
+        cout<<"[The Game Is Afoot] No valid spaces to move.\n";
+        return;
+    }
+
+    cout<<"Spaces for Holmes:\n";
+    for(int i = 0; i < AvailableMoves.size(); i++)
+    {
+        cout<<i + 1<<") Space "<<AvailableMoves[i]<<"\t";
+    }
+
+    cout<<"\nEnter your choice: ";
+    int choice;
+    cin>>choice;
+
+    while(choice < 1 || choice > AvailableMoves.size())
+    {
+        cout<<"Invalid choice. Enter again: ";
+        cin>>choice;
+    }
+
+    context.board.SetHeroLocation(context.Attacker->GetId(), AvailableMoves[choice - 1]);
+    cout<<"[The Game Is Afoot] Holmes moved to space "<<AvailableMoves[choice - 1]<<".\n";
+}

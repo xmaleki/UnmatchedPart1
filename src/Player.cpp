@@ -70,3 +70,39 @@ void Player::InitialHand()
         }
     }
 }
+
+vector<unique_ptr<Card>>& Player::GetHand()
+{
+    return HandCards;
+}
+
+vector<unique_ptr<Hero>>& Player::GetSideKicks()
+{
+    return SIDEKICKS;
+}
+
+void Player::AddCardToHand(unique_ptr<Card> card)
+{
+    HandCards.push_back(move(card));
+}
+
+vector<Hero *> Player::GetAliveHeroes()
+{
+    vector<Hero *> Heroes;
+    
+    if(!HERO->IsDead())
+    {
+        Heroes.push_back(HERO.get());
+    }
+
+    for(auto & sidekick: SIDEKICKS)
+    {
+        if(!sidekick->IsDead())
+        {
+            Heroes.push_back(sidekick.get());
+        }
+    }
+
+    return Heroes;
+}
+

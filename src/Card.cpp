@@ -844,3 +844,166 @@ void DeduceStrategy::ApplyDuringCombat(CombatContext& context)
     }
 }
 
+
+
+EducationNeverEnds::EducationNeverEnds() : Card("Education Never Ends", CardType::Versatile, 3, 1, Timing::AfterCombat,
+    "AFTER COMBAT: If you won the combat, your opponent draws 1 card. If you lost the combat, you draw 2 cards.", CardOwner::Any)
+{}
+
+
+void EducationNeverEnds::ApplyAfterCombat(CombatContext& context)
+{
+    bool AttackerWon = false;
+
+    if(context.AttackValue > context.DefenseValue)
+        AttackerWon = true;
+
+    
+    if(context.Attacker->GetName() == "Holmes" || context.Attacker->GetName() == "Watson")
+    {
+        if(AttackerWon)
+        {
+            // sherlock win ---> opponent draw 1 card
+            auto card = context.DefenderPlayer->GetDeck()->DrawCard(context.DefenderPlayer->GetHero()->GetTeam());
+            if(card)
+            {
+                context.DefenderPlayer->AddCardToHand(move(card));
+                cout<<"[Education Never Ends] Opponent draws 1 card.\n";
+            }
+            else
+            {  
+                Deck* deck = context.DefenderPlayer->GetDeck();
+
+                if(deck->IsEmpty(context.DefenderPlayer->GetHero()->GetTeam()))
+                {
+                    context.DefenderPlayer->GetHero()->TakeDamage(2);
+                    
+                    //vector<unique_ptr<Hero>> sidekick;
+                    auto& sidekick = context.DefenderPlayer->GetSideKicks();
+
+                    for(auto& hero: sidekick)
+                    {
+                        hero->TakeDamage(2);
+                    }
+                }
+            }
+
+        }
+        else
+        {
+            int counter = 0;
+            // sherlock lose -----> sherlock draw 2 card
+            for(int i = 0; i < 2; i++)
+            {
+                auto card = context.AttackerPlayer->GetDeck()->DrawCard(context.AttackerPlayer->GetHero()->GetTeam());
+                if(card)
+                {
+                    context.AttackerPlayer->AddCardToHand(move(card));
+                    counter++;
+                }
+                else
+                {
+                    Deck* deck = context.AttackerPlayer->GetDeck();
+
+                    if(deck->IsEmpty(context.AttackerPlayer->GetHero()->GetTeam()))
+                    {
+                        context.AttackerPlayer->GetHero()->TakeDamage(2);
+                        
+                        //vector<unique_ptr<Hero>> sidekick;
+                        auto& sidekick = context.AttackerPlayer->GetSideKicks();
+
+                        for(auto& hero: sidekick)
+                        {
+                            hero->TakeDamage(2);
+                        }
+                    }
+                }
+
+            }
+            if(counter == 0)
+            {
+                cout<<"[Education Never Ends] "<<context.Attacker->GetName()<<" doesn't have a card.";
+            }
+            else
+            {
+                cout<<"[Education Never Ends] "<<context.Attacker->GetName()<<" draws "<<counter<<" cards.\n";
+            }
+            
+        }
+
+    }
+    else    // agar sherlock defa konande bod
+    {
+        // sherlock win ---> Opponent draw 1 card
+        if(!AttackerWon)
+        {
+            auto card = context.AttackerPlayer->GetDeck()->DrawCard(context.AttackerPlayer->GetHero()->GetTeam());
+            if(card)
+            {
+                context.AttackerPlayer->AddCardToHand(move(card));
+                cout<<"[Education Never Ends] Opponent draws 1 card.\n";
+            }
+            else
+            {
+                Deck* deck = context.AttackerPlayer->GetDeck();
+
+                if(deck->IsEmpty(context.AttackerPlayer->GetHero()->GetTeam()))
+                {
+                    context.AttackerPlayer->GetHero()->TakeDamage(2);
+                    
+                    //vector<unique_ptr<Hero>> sidekick;
+                    auto& sidekick = context.AttackerPlayer->GetSideKicks();
+
+                    for(auto& hero: sidekick)
+                    {
+                        hero->TakeDamage(2);
+                    }
+                }
+            }
+
+        }
+        else
+        {
+            // Sherlock lose ---> sherlock draw 2 cards
+            int counter = 0;
+            for(int i = 0; i < 2; i++)
+            {
+                auto card = context.DefenderPlayer->GetDeck()->DrawCard(context.DefenderPlayer->GetHero()->GetTeam());
+                if(card)
+                {
+                    context.DefenderPlayer->AddCardToHand(move(card));
+                    counter++;
+                }
+                else
+                {
+                    Deck* deck = context.DefenderPlayer->GetDeck();
+
+                    if(deck->IsEmpty(context.DefenderPlayer->GetHero()->GetTeam()))
+                    {
+                        context.DefenderPlayer->GetHero()->TakeDamage(2);
+                        
+                        //vector<unique_ptr<Hero>> sidekick;
+                        auto& sidekick = context.DefenderPlayer->GetSideKicks();
+
+                        for(auto& hero: sidekick)
+                        {
+                            hero->TakeDamage(2);
+                        }
+                    }
+                }
+
+            }
+            if(counter == 0)
+            {
+                cout<<"[Education Never Ends] "<<context.Defender->GetName()<<" doesn't have a card.";
+            }
+            else
+            {
+                cout<<"[Education Never Ends] "<<context.Defender->GetName()<<" draws "<<counter<<" cards.\n";
+            }
+
+        }
+
+    }
+}
+

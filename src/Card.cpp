@@ -1062,3 +1062,60 @@ void EliminateTheImpossible::ApplyScheme(SchemeContext& context)
 }
 
 
+
+FixedPointInAChangingAge::FixedPointInAChangingAge() : Card("Fixed Point in a Changing Age", CardType::Versatile, 3, 1, Timing::AfterCombat,
+    "AFTER COMBAT: If Dr. Watson is adjacent to Holmes, they each recover 1 health.", CardOwner::DrWatson)
+{}
+
+
+void FixedPointInAChangingAge::ApplyAfterCombat(CombatContext& context)
+{
+    cout<<"debug after combat FixedPointInAChangingAge execute ";
+    Hero* Watson = context.Attacker->GetName() == "Watson" ? context.Attacker : context.Defender;
+    Hero* Holmes = nullptr;
+
+    if(context.AttackerPlayer->GetHero()->GetName() == "Holmes")
+    {
+        Holmes = context.AttackerPlayer->GetHero();
+    }
+    else if(context.DefenderPlayer->GetHero()->GetName() == "Holmes")
+    {
+        Holmes = context.DefenderPlayer->GetHero();
+    }
+
+    if(!Holmes)
+    {
+        cout<<"debug holems not exist";
+        return;
+    }
+        
+
+    int WatsonSpace = context.board.GetHeroLocation(Watson->GetId());
+    int HolmesSpace = context.board.GetHeroLocation(Holmes->GetId());
+
+    auto adj = context.map.GetAdjacents(WatsonSpace);
+
+    bool adjacent = false;
+    for(int space : adj)
+    {
+        if(space == HolmesSpace)
+        {
+            adjacent = true;
+            break;
+        }
+    }
+
+    if(adjacent)
+    {
+        Holmes->Heal(1);
+        Watson->Heal(1);
+
+        cout<<"[Fixed Point in a Changing Age] Both heroes recover 1 health.\n";
+    }
+    else
+    {
+        cout << "[Fixed Point in a Changing Age] Watson is not adjacent to Holmes. No healing.\n";
+    }
+
+}
+

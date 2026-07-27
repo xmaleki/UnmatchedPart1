@@ -40,3 +40,33 @@ std::string Player::GetName() const
 {
     return Name;
 }
+
+void Player::InitializeDeck(HeroesTeam team)
+{
+    deck = std::make_unique<Deck>();
+    if(team == HeroesTeam::DRACULA)
+    {
+        deck->CreateDraculaDeck();
+    }
+    else
+    {
+        deck->CreateSherlockDeck();
+    }
+}
+
+Deck* Player::GetDeck() const
+{
+    return deck.get(); 
+}
+
+void Player::InitialHand()
+{
+    for(int i = 0; i < 5; ++i)
+    {
+        auto card = deck->DrawCard(HERO->GetTeam());
+        if(card)
+        {
+            HandCards.push_back(move(card));
+        }
+    }
+}

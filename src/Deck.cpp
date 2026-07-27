@@ -117,3 +117,61 @@ void Deck::CreateSherlockDeck()
 
 }
 
+
+void Deck::CreateDraculaDeck()
+{
+    // atash khon
+    AddCard(make_unique<FeedingFrenzy>(), HeroesTeam::DRACULA);
+    AddCard(make_unique<FeedingFrenzy>(), HeroesTeam::DRACULA);
+
+    // form meh
+    AddCard(make_unique<MistForm>(), HeroesTeam::DRACULA);
+    AddCard(make_unique<MistForm>(), HeroesTeam::DRACULA);
+
+    // kamin
+    AddCard(make_unique<Ambush>(), HeroesTeam::DRACULA);
+    AddCard(make_unique<Ambush>(), HeroesTeam::DRACULA);
+
+    // ghosle khon
+    AddCard(make_unique<BaptismOfBlood>(), HeroesTeam::DRACULA);
+    AddCard(make_unique<BaptismOfBlood>(), HeroesTeam::DRACULA);
+
+    // form hayola
+    AddCard(make_unique<Beastform>(), HeroesTeam::DRACULA);
+    AddCard(make_unique<Beastform>(), HeroesTeam::DRACULA);
+
+    // yoresh
+    AddCard(make_unique<Dash>(), HeroesTeam::DRACULA);
+    AddCard(make_unique<Dash>(), HeroesTeam::DRACULA);
+    AddCard(make_unique<Dash>(), HeroesTeam::DRACULA);
+
+    // bahre bardari
+    AddCard(make_unique<Exploit>(), HeroesTeam::DRACULA);
+    AddCard(make_unique<Exploit>(), HeroesTeam::DRACULA);
+    AddCard(make_unique<Exploit>(), HeroesTeam::DRACULA);
+
+    // be cheshmanam negah kon
+    AddCard(make_unique<LookIntoMyEyes>(), HeroesTeam::DRACULA);
+    AddCard(make_unique<LookIntoMyEyes>(), HeroesTeam::DRACULA);
+    AddCard(make_unique<LookIntoMyEyes>(), HeroesTeam::DRACULA);
+
+    // shekar kon
+    AddCard(make_unique<PreyUpon>(), HeroesTeam::DRACULA);
+    AddCard(make_unique<PreyUpon>(), HeroesTeam::DRACULA);
+
+    // eghvaye siri napazir
+    AddCard(make_unique<RaveningSeduction>(), HeroesTeam::DRACULA);
+    AddCard(make_unique<RaveningSeduction>(), HeroesTeam::DRACULA);
+    AddCard(make_unique<RaveningSeduction>(), HeroesTeam::DRACULA);
+
+    // teshnegi baraye bagha
+    AddCard(make_unique<ThirstForSustenance>(), HeroesTeam::DRACULA);
+    AddCard(make_unique<ThirstForSustenance>(), HeroesTeam::DRACULA);
+    AddCard(make_unique<ThirstForSustenance>(), HeroesTeam::DRACULA);
+
+    // farib
+    AddCard(make_unique<Feint>(), HeroesTeam::DRACULA);
+    AddCard(make_unique<Feint>(), HeroesTeam::DRACULA);
+    AddCard(make_unique<Feint>(), HeroesTeam::DRACULA);
+
+}

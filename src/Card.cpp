@@ -1204,3 +1204,52 @@ void TheGameIsAfoot::ApplyAfterCombat(CombatContext& context)
 ServiceRevolver::ServiceRevolver(): Card("Service Revolver", CardType::Attack, 5, 3, Timing::AfterCombat,
     "", CardOwner::DrWatson)
 {}
+
+StudyMethods::StudyMethods() : Card("Study Methods", CardType::Versatile, 3, 2, Timing::AfterCombat,
+    "AFTER COMBAT: If you won the combat, look at your opponent's hand.", CardOwner::Any)
+{}
+
+
+void StudyMethods::ApplyAfterCombat(CombatContext& context)
+{
+    Hero* winner = nullptr;
+
+    bool OwnerIsAttacker = (context.AttackCard == this);
+
+    if(context.AttackValue > context.DefenseValue)
+    {
+        winner = context.Attacker;
+    }
+    else if(context.DefenseValue > context.AttackValue)
+    {
+        winner = context.Defender;
+    }else
+    {
+        winner = nullptr;
+    }
+
+    if((OwnerIsAttacker && winner != context.Attacker) || (!OwnerIsAttacker && winner != context.Defender))
+    {
+        cout << "[Study Methods] You did not win the combat. No effect.\n";
+        return;
+    }
+
+    Player* OpponentPlayer = OwnerIsAttacker ? context.DefenderPlayer : context.AttackerPlayer;
+
+    cout << "[Study Methods] You won the combat. Opponent's hand:\n";
+
+    auto &vec = OpponentPlayer->GetHand();
+    if(vec.empty())
+    {
+        cout << "Opponent has no cards.\n";
+        return;
+    }
+
+    for(int i = 0; i < vec.size(); i++)
+    {
+        cout<<i + 1<<") "<<vec[i]->GetName()<<"\t";
+    }
+    cout<<endl;
+
+}
+

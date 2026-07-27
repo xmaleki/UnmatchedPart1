@@ -1119,3 +1119,50 @@ void FixedPointInAChangingAge::ApplyAfterCombat(CombatContext& context)
 
 }
 
+
+
+MasterOfDisguise::MasterOfDisguise(): Card("Master of Disguise", CardType::Scheme, 0, 2, Timing::Event,
+    "Choose an opponent. Holmes swaps spaces with their hero. Deal 1 damage to that hero.", CardOwner::SherlockHolmes)
+{}
+
+void MasterOfDisguise::ApplyScheme(SchemeContext& context)
+{
+    vector<Hero*> AllEnemies;
+
+    Hero* Holmes = context.player->GetHero();
+    auto& EnemySideKicks = context.OpponentPlayer->GetSideKicks();
+    AllEnemies.push_back(context.OpponentPlayer->GetHero());
+
+    for(auto &sk : EnemySideKicks)
+    {
+        if(!sk->IsDead())
+            AllEnemies.push_back(sk.get());
+    }
+        
+    cout<<"Choose an opponent hero:\n";
+    for(int i = 0; i < AllEnemies.size(); i++)
+    {
+        cout<<i + 1<<") "<<AllEnemies[i]->GetName()<<" Loc: {"<<context.board.GetHeroLocation(AllEnemies[i]->GetId())<<"}"<<"\t";
+    }
+
+    int choice;
+    cin>>choice;
+
+    while(choice < 1 || choice > AllEnemies.size())
+    {
+        cout<<"Invalid choice. Enter again: ";
+        cin>>choice;
+    }
+
+    Hero* EnemyHero = AllEnemies[choice - 1];
+
+    int HolmesSpace = context.board.GetHeroLocation(Holmes->GetId());
+    int EnemySpace = context.board.GetHeroLocation(EnemyHero->GetId());
+
+    context.board.SetHeroLocation(Holmes->GetId(), EnemySpace);
+    context.board.SetHeroLocation(EnemyHero->GetId(), HolmesSpace);
+
+    EnemyHero->TakeDamage(1);
+
+    cout<<"[Master of Disguise] Holmes swapped spaces with "<<EnemyHero->GetName()<<" and dealt 1 damage.\n";
+}

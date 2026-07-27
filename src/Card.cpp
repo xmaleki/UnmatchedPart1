@@ -773,3 +773,41 @@ void AdministerAid::ApplyScheme(SchemeContext& context)
 }
 
 
+
+// class ConfirmSuspicion : public Card
+
+
+Counterpunch::Counterpunch() : Card("Counterpunch", CardType::Versatile, 3, 1, Timing::AfterCombat,
+    "AFTER COMBAT: If Holmes is adjacent to the opposing fighter, deal 2 damage to that fighter.", CardOwner::SherlockHolmes)
+{}
+
+
+void Counterpunch::ApplyAfterCombat(CombatContext& context)
+{
+    int AttackerSpace = context.board.GetHeroLocation(context.Attacker->GetId());
+    int DefenderSpace = context.board.GetHeroLocation(context.Defender->GetId());
+
+    auto adj = context.map.GetAdjacents(AttackerSpace);
+
+    bool adjacent = false;
+
+    for(int space : adj)
+    {
+        if(space == DefenderSpace)
+        {
+            adjacent = true;
+            break;
+        }
+    }
+
+    if(adjacent)
+    {
+        context.Defender->TakeDamage(2);
+        cout<<"[Counterpunch] "<<context.Attacker->GetName()<<" hit 2 damage to "<<context.Defender->GetName()<<" after combat.\n";
+    }
+    else
+    {
+        cout<<"[Counterpunch] Enemy is not adjacent. No damage.\n";
+    }
+
+}

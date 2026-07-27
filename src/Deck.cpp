@@ -175,3 +175,16 @@ void Deck::CreateDraculaDeck()
     AddCard(make_unique<Feint>(), HeroesTeam::DRACULA);
 
 }
+
+
+bool Deck::IsEmpty(HeroesTeam heroteam) const
+{
+    if(heroteam == HeroesTeam::DRACULA)
+    {
+        return DraculaDeck.empty();
+    }
+    else
+    {
+        return SherlockDeck.empty();
+    }
+}

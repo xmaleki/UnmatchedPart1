@@ -106,3 +106,33 @@ vector<Hero *> Player::GetAliveHeroes()
     return Heroes;
 }
 
+
+void Player::DiscardCardFromHand(Card* card)
+{
+    for(int i = 0; i < HandCards.size(); i++)
+    {
+        if(card == HandCards[i].get())
+        {
+            DiscardCards.push_back(move(HandCards[i]));
+            HandCards.erase(HandCards.begin() + i);
+            return;
+        }
+    }
+}
+
+int Player::GetHandSize() const
+{
+    return HandCards.size();
+}
+
+
+Card* Player::GetCardFromHand(int CardIndex) const
+{
+    return HandCards[CardIndex].get();
+}
+
+void Player::SetSideKickLocation(int id)
+{
+
+}
+

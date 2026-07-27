@@ -701,3 +701,75 @@ void Feint::ApplyImmediately(CombatContext& context)
 
     cout<<"[Feint] Cancel opponent's card effects.\n";
 }
+
+// =================================== Sherlock holmes ===================================
+
+
+AdministerAid::AdministerAid() : Card("Administer Aid", CardType::Scheme, 0, 2, Timing::Event, 
+    "Place Dr. Watson in a space adjacent to Holmes. Holmes recovers 1 health. Draw 1 card.",CardOwner::DrWatson)
+{}
+
+void AdministerAid::ApplyScheme(SchemeContext& context)
+{
+    context.terminalview.display();
+
+    auto& sidekicks = context.player->GetSideKicks();
+
+    Hero* Watson = nullptr;
+
+    for(auto& side : sidekicks)
+    {
+        if(side->GetName() == "Watson")
+        {
+            Watson = side.get();
+            break;        
+        }
+    }
+
+    if(!Watson)
+    {
+        cout<<"[Administer Aid] Watson is not available.\n";
+        return;
+    }
+
+    int SherlockSpace = context.board.GetHeroLocation(context.hero->GetId());
+    auto adj = context.map.GetAdjacents(SherlockSpace);
+
+    vector<int> AvailableSpaces;
+
+    for(int space : adj)
+    {
+        if(!context.board.IsOccupied(space))
+            AvailableSpaces.push_back(space);
+    }
+
+    if(AvailableSpaces.empty())
+    {
+        cout<<"[Administer Aid] No adjacent free spaces.\n";
+        return;
+    }
+    
+    cout<<"[Administer Aid] Choose a space to place Watson:\n";
+    for(int i = 0; i < AvailableSpaces.size(); i++)
+        cout<<i + 1<<") "<<AvailableSpaces[i]<<"\t";
+
+    int choice;
+    cin>>choice;
+
+    while(choice < 1 || choice > AvailableSpaces.size())
+    {
+        cout<<"Invalid choice. Enter again: ";
+        cin>> choice;
+    }
+
+    int TargetSpace = AvailableSpaces[choice - 1];
+    context.board.SetHeroLocation(Watson->GetId() ,TargetSpace);
+
+    context.hero->Heal(1);
+    unique_ptr<Card> card = context.player->GetDeck()->DrawCard(context.player->GetHero()->GetTeam());
+    context.player->AddCardToHand(move(card));
+
+    cout<<"[Administer Aid] Watson placed next to Holmes. Holmes healed 1 HP and drew 1 card.\n";
+}
+
+

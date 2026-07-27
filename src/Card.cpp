@@ -811,3 +811,36 @@ void Counterpunch::ApplyAfterCombat(CombatContext& context)
     }
 
 }
+
+DeduceStrategy::DeduceStrategy(): Card("Deduce Strategy", CardType::Versatile, 3, 1, Timing::DuringCombat, 
+    "DURING COMBAT: You may change the printed attack value of the opponent's card to its BOOST value. (If a card does not have a BOOST value, it is treated as 0.)", CardOwner::SherlockHolmes)
+{}
+
+
+void DeduceStrategy::ApplyDuringCombat(CombatContext& context)
+{
+    Card* OpponentCard = context.AttackCard; // agar sherlock defa konande bashad, kart doshman hamon attack karte
+
+    if(context.Attacker->GetName() == "Holmes") // agar sherlock attacker bashe, kart doshman hamon kart defaee.
+    {
+        OpponentCard = context.DefenseCard;
+    }
+
+    if(!OpponentCard)
+        return;
+
+
+    int NewValue = OpponentCard->GetBoost();
+
+    if(context.Defender->GetName() == "Holmes") // age holmes defaa bashe attacker meghdar boostesh ba attack jabeja mishe
+    {
+        context.AttackValue = NewValue;
+        cout<<"[Deduce Strategy] Opponent attack changed to BOOST value: "<<NewValue<<"\n";
+    }
+    else // age holmes attacker bashe, defaa meghdar boostesh ba attack jabeja mishe.
+    {
+        context.DefenseValue = NewValue;
+        cout<<"[Deduce Strategy] Opponent defense changed to BOOST value: "<<NewValue<<"\n";
+    }
+}
+

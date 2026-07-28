@@ -188,3 +188,105 @@ void GameManager::InitializeHeroesPositions()
     cout<<"The other player placed in space "<<PositionSpace2<<endl;
 }
 
+
+void GameManager::InitializeSidekicksPositions(Player* player, int HeroSpace)
+{
+    vector<int> SpacesWithSameZones = GameMap->GetSpeacesWithSameZones(HeroSpace);
+    vector<int> AvailableSpaces;
+
+    for(int space : SpacesWithSameZones)
+    {
+        if(space != HeroSpace && !board->IsOccupied(space))
+        {
+            AvailableSpaces.push_back(space);
+        }
+    }
+
+    cout<<"\nAvailable spaces for sidekick:\n";
+    int counter = 1;
+
+    for(int space : AvailableSpaces)
+    {
+        cout<<counter<<") Space "<<space<<"\t";
+        counter++;
+
+        if(counter % 6 == 0)
+            cout<<endl;
+    }
+
+    //if(AvailableSpaces.size() < SIDEKISK)
+
+    HeroesTeam team = player->GetHero()->GetTeam();
+    int choice;
+
+    if(AvailableSpaces.empty())
+    {
+        cout<<"No available spaces for sidekicks in this zone!\n";
+        return;
+    }
+
+    if(team == HeroesTeam::DRACULA)
+    {
+        for(int i = 1; i <= 3; i++)
+        {
+            if(AvailableSpaces.empty())
+            {
+                cout<<"No more available spaces left for sisters.\n";
+            }
+
+            int SideKickId = i + 1;
+            cout<<"\nPlease choice sister number "<<i<<" location: ";
+            cin>>choice;
+
+            if(choice >= 1 && choice <= AvailableSpaces.size())
+            {
+                board->SetHeroLocation(SideKickId, AvailableSpaces[choice - 1]);
+                cout<<"Sister number "<<i<<" placed in "<<AvailableSpaces[choice - 1]<<endl;
+                AvailableSpaces.erase(AvailableSpaces.begin() + choice - 1);
+            }
+            else
+            {
+                cout<<"Invalid choose. try again.\n";
+                i--;
+            }
+
+            counter = 1;
+            for(int space : AvailableSpaces)
+            {
+                cout<<counter<<") Space "<<space<<"\t";
+                counter++;
+            }
+
+            //cout<<"If you want to exit: ";
+        }
+
+    }
+    else
+    {
+        while(true)
+        {
+            if(AvailableSpaces.empty())
+            {
+                cout<<"No more available spaces left for Watson.\n";
+            }
+
+            cout<<"\nPlease enter location of Doctor Watson: ";
+            cin>>choice;
+            
+            if(choice >= 1 && choice <= AvailableSpaces.size())
+            {
+                board->SetHeroLocation(6, AvailableSpaces[choice - 1]);
+                cout<<"Doctor Watson placed in "<<AvailableSpaces[choice - 1]<<".\n";
+                AvailableSpaces.erase(AvailableSpaces.begin() + choice - 1);
+                break;
+            }
+            else
+            {
+                cout<<"Invalid choice.";
+                continue;
+            }
+        }
+    }
+
+
+}

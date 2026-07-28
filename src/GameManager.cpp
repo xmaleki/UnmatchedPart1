@@ -588,3 +588,145 @@ void GameManager::Run()
         swap(CurrentPlayer, OpponentPlayer);
     }
 }
+
+void GameManager::Maneuver(Player &player, TerminalView& view)
+{
+    cout<<"==========================================\n";
+    cout<<"Maneuver\n";
+    cout<<"==========================================\n";
+
+    HeroesTeam team = player.GetHero()->GetTeam();
+    unique_ptr<Card> card = player.GetDeck()->DrawCard(team);
+    auto heroes = player.GetAliveHeroes();
+
+    if(card == nullptr)
+    {
+        cout<<"All your heroes team take 2 damage.";
+        //take damage all hero of team
+        for(auto &hero : heroes)
+        {
+            hero->TakeDamage(2);
+        }
+
+        return;
+    }
+
+    player.AddCardToHand(move(card));
+
+
+
+    char MoveChoice;
+    cout<<"Move Hero (Y/N)? ";
+    cin >> MoveChoice;
+
+    if(MoveChoice != 'y' && MoveChoice != 'Y')
+    {
+        return;
+    }
+
+    
+
+    if(heroes.empty())
+        return;
+
+    view.display();
+    cout<<"Availabe hero:\n";
+
+    for(int i = 0; i < heroes.size(); i++)
+    {
+        cout<< i + 1 << ". " << heroes[i]->GetName() <<" Loc: ["<<board->GetHeroLocation(heroes[i]->GetId())<<"]"<< "\t";
+    }
+
+    cout<<"\nChoose a Hero: ";
+    int choice;
+    cin >> choice;
+    
+    while(choice < 1 || choice > heroes.size())
+    {
+        cout<<"Invalid Hero!\nEnter again: ";
+        cin >> choice;
+    }
+
+    Hero* LiveHero = heroes[choice - 1];
+
+
+    // Boost system
+    int MoveCount = 2;
+    cout<<"Do you want to Boost your movement? (Y/N): ";
+    char BoostChoice;
+    cin>>BoostChoice;
+
+    if(BoostChoice == 'y' || BoostChoice == 'Y')
+    {
+        auto &hand = player.GetHand();
+        
+        if(hand.empty())
+        {
+            cout<<"You have no cards to boost with.\n";
+        }
+        else
+        {
+            cout<<"-----------------------------------------------------\n";
+            cout<<"Choose a card to discard for Boost:\n";
+
+            for(int i = 0; i < hand.size(); i++)
+            {
+                cout<<i + 1<<") "<<hand[i]->GetName()<<" [Owner:"<<hand[i]->ToStringOwner(hand[i]->GetOwner())<<"] (Boost :"<<hand[i]->GetBoost()<<")\n";
+            }
+            cout<<"-----------------------------------------------------\nEnter your choice: ";
+            int choice;
+            cin>>choice;
+
+            while(choice < 1 || choice > hand.size())
+            {
+                cout<<"Invalid choice. Enter again: ";
+                cin>>choice;
+            }
+
+            Card* BoostCard = hand[choice - 1].get();
+            MoveCount += BoostCard->GetBoost();
+            player.DiscardCardFromHand(BoostCard);
+
+            view.display();
+            cout<<"Boost applied! New movement = "<<MoveCount<<"\n";
+            
+        }
+
+    }
+
+    vector<int> moves = movement->GetAvailableMove(MoveCount, LiveHero->GetId());
+
+
+    if(moves.empty())
+    {
+        cout<<"No availabe spaces.\n";
+        return;
+    }
+
+    cout<<"Availble spaces:\n";
+    int counter = 1;
+    for(auto &move : moves)
+    {
+        cout<<counter<<") Space "<<move<<"\t";
+        counter++;
+
+        if(counter % 6 == 0)
+            cout<<endl;
+    }
+
+    cout<<"\nEnter your choice: ";
+    int SpaceChoice;
+    cin >> SpaceChoice;
+
+    while(SpaceChoice < 1 || SpaceChoice > moves.size())
+    {
+        cout<< "Invalid choice.\nEnter again: ";
+        cin >> SpaceChoice;
+    }
+
+    int Destination = moves[SpaceChoice - 1];
+
+    board->SetHeroLocation(LiveHero->GetId(), Destination);
+    cout<<LiveHero->GetName()<<" Placed in "<<Destination<<" successfully.\n";
+
+}

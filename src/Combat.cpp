@@ -160,3 +160,53 @@ void Combat::StartCombat(Player* AttackerPlayer, Player* DefenderPlayer,
     cout<<"==========================================\n";
 
 }
+
+vector<Hero*> Combat::GetValidTargets(Hero* attacker)
+{
+    vector<Hero*> result;
+
+    int AttackerSpace = board.GetHeroLocation(attacker->GetId());
+
+    if(attacker->GetAttackType() == AttackType::MELEE)
+    {
+        for(int neighbor : map.GetAdjacents(AttackerSpace))
+        {
+            if(board.IsOccupiedByEnemy(neighbor, attacker->GetId()))
+            {
+                Hero* enemy = board.GetHeroBySpace(neighbor);
+                if(enemy && !enemy->IsDead())
+                    result.push_back(enemy);
+            }
+        }
+    }
+    else // RANGED
+    {
+        const auto& AttackerZones = map.GetSpace(AttackerSpace).GetZones();
+
+        for(int space = 0; space < 32; space++)
+        {
+            if(board.IsOccupiedByEnemy(space, attacker->GetId()))
+            {
+                Hero* enemy = board.GetHeroBySpace(space);
+                if(!enemy || enemy->IsDead())
+                    continue;
+
+                const auto& enemyZones = map.GetSpace(space).GetZones();
+                bool SameZone = false;
+
+                for(auto hz : AttackerZones)
+                {
+                    for(auto ez : enemyZones)
+                    if(hz == ez)
+                        SameZone = true;
+                }
+
+                if(SameZone)
+                    result.push_back(enemy);
+            }
+        }
+    }
+    return result;
+}
+
+

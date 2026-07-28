@@ -533,3 +533,58 @@ void GameManager::PlayerTurn()
 
 
 }
+
+
+void GameManager::Run()
+{
+    GameMap->CreateMap();
+    
+
+    StartGame();
+    InitializeHeroes();
+
+    vector<Hero*> AllHeroes;
+    AllHeroes.push_back(player1->GetHero());
+    for(const auto& sidekick: player1->GetSideKicks())
+    {
+        AllHeroes.push_back(sidekick.get());
+    }
+    AllHeroes.push_back(player2->GetHero());
+    for(const auto& sidekick: player2->GetSideKicks())
+    {
+        AllHeroes.push_back(sidekick.get());
+    }
+
+    board = make_unique<Board>(AllHeroes);
+    movement = make_unique<Movement>(*GameMap, *board);
+    combat = make_unique<Combat>(*board, *GameMap, *movement);
+
+    
+    InitializeHeroesPositions();
+    
+    cout<<"ttt 1\n";
+
+    for(int i = 0; i < 5; i++)
+    {
+        auto c1 = player1->GetDeck()->DrawCard(player1->GetHero()->GetTeam());
+        if(c1)
+            player1->AddCardToHand(move(c1));
+
+        auto c2 = player2->GetDeck()->DrawCard(player2->GetHero()->GetTeam());
+        if(c2)
+            player2->AddCardToHand(move(c2));
+    }
+
+    cout<<"ttt 1\n";
+    
+
+
+    CurrentPlayer = player1.get();
+    OpponentPlayer = player2.get();
+
+    while(true)
+    {
+        PlayerTurn();
+        swap(CurrentPlayer, OpponentPlayer);
+    }
+}

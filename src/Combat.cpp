@@ -210,3 +210,38 @@ vector<Hero*> Combat::GetValidTargets(Hero* attacker)
 }
 
 
+
+
+Hero* Combat::ChooseTarget(Hero* attacker)
+{
+    auto targets = GetValidTargets(attacker);
+
+    if(targets.empty())
+    {
+        cout<<"No valid targets for this attack.\n";
+        return nullptr;
+    }
+
+    cout<<"Choose target:\n";
+    for(int i = 0; i < targets.size(); i++)
+    {
+        cout<<i + 1<<") "<<targets[i]->GetName()<<"\t";
+    }
+
+    int choice;
+    cin>>choice;
+
+    while(choice < 1 || choice > targets.size())
+    {
+        cout<<"Invalid choice. Enter again: ";
+        cin>>choice;
+    }
+
+    return targets[choice - 1];
+
+}
+
+
+
+
+

@@ -730,3 +730,66 @@ void GameManager::Maneuver(Player &player, TerminalView& view)
     cout<<LiveHero->GetName()<<" Placed in "<<Destination<<" successfully.\n";
 
 }
+
+
+bool GameManager::CanPlayCard(const Card* card, Hero* hero)
+{
+    int heroid = hero->GetId();
+    int heroSpace = board->GetHeroLocation(heroid);
+
+    if(card->GetOwner() != CardOwner::Any && card->GetOwner() != hero->GetOwnerType())
+        return false;
+    /*
+    if(card->GetOwner() != CardOwner::Any && hero->IsDead())
+        return false;
+    */
+
+    if(card->GetType() == CardType::Defence)
+        return false;
+
+    if(card->GetType() == CardType::Scheme)
+        return true;
+
+    bool isAttackCard = (card->GetType() == CardType::Attack) ||
+                         (card->GetType() == CardType::Versatile);
+    
+    if(!isAttackCard)
+        return true;
+
+    AttackType type = hero->GetAttackType();
+
+    if(type == AttackType::MELEE)
+    {
+        for(int neighbor : GameMap->GetAdjacents(heroSpace))
+        {
+            if(board->IsOccupiedByEnemy(neighbor, heroid))
+                return true;
+        }
+
+        return false;
+    }
+
+    if(type == AttackType::RANGED)
+    {
+        const auto& heroZones = GameMap->GetSpace(heroSpace).GetZones();
+
+        for(int space = 0; space < 32; space++)
+        {
+            if(board->IsOccupiedByEnemy(space, heroid))
+            {
+                const auto& enemyZones = GameMap->GetSpace(space).GetZones();
+
+                for(auto hz :heroZones)
+                    for(auto ez : enemyZones)
+                        if(hz == ez)
+                            return true;
+
+            }
+        }
+
+        return false;
+    }
+
+    return false;
+}
+

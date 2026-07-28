@@ -154,3 +154,37 @@ void GameManager::InitializeHeroes()
 
     cout<<"****************** Heroes and Sidekicks initialized successfully. ******************\n";
 }
+
+
+void GameManager::InitializeHeroesPositions()
+{
+    cout<<"==========================================\n";
+    cout<<"Initialize Heroes Positions\n";
+    cout<<"==========================================\n";
+    cout<<"\nThe younger player ["<<player1->GetName()<<"] should choice hero.";
+    cout<<"\n1. Space 15\n2. Space 2\nEnter your choice: ";
+    int choice;
+    cin>>choice;
+    while(choice < 1 || choice > 2)
+    {
+        cout<<"Invalid choice.\nEnter your choice: ";
+        cin>>choice;
+    }
+
+    int PositionSpace1 = (choice == 1) ? 15 : 2;
+    int PositionSpace2 = (choice == 1) ? 2 : 15;
+    
+    board->SetHeroLocation(player1->GetHeroId(), PositionSpace1);
+    //player1->GetHero()->SetLocation(PositionSpace1);
+
+    InitializeSidekicksPositions(player1.get(), PositionSpace1);
+
+    board->SetHeroLocation(player2->GetHeroId(), PositionSpace2);
+    //player2->GetHero()->SetLocation(PositionSpace2);
+
+    InitializeSidekicksPositions(player2.get(), PositionSpace2);
+
+    cout<<"The younger player ["<<player1->GetName()<<"] placed in space "<<PositionSpace1<<endl;
+    cout<<"The other player placed in space "<<PositionSpace2<<endl;
+}
+

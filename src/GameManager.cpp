@@ -852,3 +852,75 @@ Hero* GameManager::ChooseAttackerForCombat(Card* card)
     return Attackers[AttackerChoice - 1];
 }
 
+
+
+Hero* GameManager::ChooseDefenderForCombat(Hero* hero)
+{
+    vector<Hero*> Enemy;
+
+    int heroid = hero->GetId();
+    int heroSpace = board->GetHeroLocation(heroid);
+
+    AttackType type = hero->GetAttackType();
+
+    if(type == AttackType::MELEE)
+    {
+        for(int neighbor : GameMap->GetAdjacents(heroSpace))
+        {
+            if(board->IsOccupiedByEnemy(neighbor, heroid))
+                Enemy.push_back(board->GetHeroBySpace(neighbor));
+        }
+    }
+
+    if(type == AttackType::RANGED)
+    {
+        const auto& heroZones = GameMap->GetSpace(heroSpace).GetZones();
+
+        for(int space = 0; space < 32; space++)
+        {
+            if(board->IsOccupiedByEnemy(space, heroid))
+            {
+                const auto& enemyZones = GameMap->GetSpace(space).GetZones();
+
+                for(auto hz :heroZones)
+                    for(auto ez : enemyZones)
+                        if(hz == ez)
+                            Enemy.push_back(board->GetHeroBySpace(space));
+            }
+        }
+    }
+
+    int choice;
+
+    if(Enemy.size() == 0)
+    {
+        cout<<"No enemy available for this card.";
+        return nullptr;
+    }
+    else if(Enemy.size() == 1)
+    {
+        cout<<"Defender is: "<<Enemy[0]->GetName()<<"\n";
+        return Enemy[0];
+    }
+    else
+    {
+        
+        for(int i = 0; i < Enemy.size(); i++)
+        {
+            cout<<i + 1<<") "<<Enemy[i]->GetName()<<"\t";
+        }
+
+        cout<<"\nEnter defender: ";
+        cin>>choice;            
+
+        while(choice < 1 || choice > Enemy.size())
+        {
+            cout<<"Invalid defender. Enter again: ";
+            cin>>choice;
+        }
+    }
+
+    return Enemy[choice - 1];
+}
+
+

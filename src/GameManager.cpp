@@ -793,3 +793,62 @@ bool GameManager::CanPlayCard(const Card* card, Hero* hero)
     return false;
 }
 
+
+bool GameManager::IsGameOver()
+{
+    if(player1->GetHero()->IsDead())
+    {
+        cout<<endl<<player2->GetName()<<" wins the game!\n";
+        return true;
+    }
+
+    if(player2->GetHero()->IsDead())
+    {
+        cout<<endl<<player1->GetName()<<" wins the game!\n";
+        return true;
+    }
+
+    return false;
+}
+
+
+
+
+Hero* GameManager::ChooseAttackerForCombat(Card* card)
+{
+    vector<Hero*> Attackers;
+
+    for(auto *h : CurrentPlayer->GetAliveHeroes())
+    {
+        if(CanPlayCard(card, h))
+        {
+            Attackers.push_back(h);
+        }
+    }
+
+
+    if(Attackers.empty())
+    {
+        cout<<"No valid hero can play this card.\n";
+        return nullptr;
+    }
+
+    cout<<"Available hero:\n";
+    for(int i = 0; i < Attackers.size(); i++)
+    {
+        cout<<i + 1<<") "<<Attackers[i]->GetName()<<" [HP = "<<Attackers[i]->GetHP()<<"] {Loc: "<<board->GetHeroLocation(Attackers[i]->GetId())<<"}\t";
+    }
+    cout<<"\nChoose hero: ";
+    
+    int AttackerChoice;
+    cin>>AttackerChoice;
+
+    while(AttackerChoice <= 0 || AttackerChoice > Attackers.size())
+    {
+        cout<<"Invalid choice. Enter again: ";
+        cin>>AttackerChoice;
+    }
+
+    return Attackers[AttackerChoice - 1];
+}
+

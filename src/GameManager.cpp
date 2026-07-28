@@ -290,3 +290,246 @@ void GameManager::InitializeSidekicksPositions(Player* player, int HeroSpace)
 
 
 }
+
+
+void GameManager::ShowHand()
+{
+    cout<<"Hand "<<CurrentPlayer->GetName()<<" :\n";
+    const auto& hand = CurrentPlayer->GetHand();
+    for(int i = 0; i < hand.size(); i++)
+    {
+        cout<<i+1<<". "<<hand[i]->GetName()<<"\t";
+    }
+}
+
+
+void GameManager::PlayerTurn()
+{
+    int ActionsRemaining = 2;
+
+    while(ActionsRemaining > 0)
+    {
+        TerminalView view(*GameMap, *board);
+        view.display();
+
+        cout<<"=========--------- Turn "<<CurrentPlayer->GetName()<<" ---------=========\n";
+
+        CurrentPlayer->GetHero()->SpecialAbility(*board, *GameMap, CurrentPlayer);
+
+        cout<<"Actions left: "<<ActionsRemaining<<"\n";
+        cout<<"1. Maneuver (Draw a card + Move)\n";
+    
+        const auto &hand = CurrentPlayer->GetHand();
+        vector<int> PlayableCards;
+        auto &sidekicks = CurrentPlayer->GetSideKicks();
+
+        if(!hand.empty())
+        {
+            cout<<"2. HAND:\n\t";
+            int Counter = 1;
+
+            for(int i = 0; i < hand.size(); i++)
+            {
+                bool playable = false;
+
+                if(CanPlayCard(hand[i].get(), CurrentPlayer->GetHero()))
+                    playable = true;
+
+                for(auto& side : sidekicks)
+                {
+                    if(side->IsDead())
+                        continue;
+
+                    if(CanPlayCard(hand[i].get(), side.get()))
+                    {
+                        playable = true;
+                        break;
+                    }
+                }
+
+                if(playable)
+                {
+                    PlayableCards.push_back(i);
+                    cout<< Counter <<") "<< hand[i]->GetName()<< " [" << hand[i]->ToStringType(hand[i]->GetType()) << "] "
+                        << "{Owner: " << hand[i]->ToStringOwner(hand[i]->GetOwner()) << "}\t";
+
+                    Counter++;
+
+                    if((Counter) % 3 == 0)
+                        cout<<"\n\t";
+                }
+            }
+
+
+
+            if(PlayableCards.empty())
+            {
+                cout<<"No playable cards. You can only Maneuver.";
+            }
+            }
+            else
+            {
+                cout<<"Hand is empty.\n";
+            }
+            
+            cout<<"\n3. End Turn\n";
+            cout<<"4. End Game\n";
+            
+            cout<<"Choice: ";
+            int choice;
+            cin>>choice;
+
+            if(cin.fail())
+            {
+                cin.clear();
+                cin.ignore(1000, '\n');
+                continue;
+            }
+
+            switch (choice)
+            {
+                case 1:
+                    cout<<"Maneuver: Draw 1 card.\n";
+                    Maneuver(*CurrentPlayer, view);
+                    ActionsRemaining--;
+                    break;
+
+                case 2:
+                    if(PlayableCards.empty())
+                    {
+                        cout<<"############### No playable cards. ###############\n";
+                        // end turn
+                        // cout<<"Invalid choice. hand empty.";
+                        break;
+                    }
+                    else
+                    {
+                        cout<<"Enter card number to play: ";
+                        int CardIndex;
+                        cin >> CardIndex;
+                        while(CardIndex < 0 || CardIndex > PlayableCards.size())
+                        {
+                            cout<<"Invalid choice. Enter again: ";
+                            cin>>CardIndex;
+                        }
+
+                        int PlayableCardIndex = PlayableCards[CardIndex - 1];
+                        auto& card = hand[PlayableCardIndex];
+                        // combat if attack or versatile
+
+
+                        cout<<"Playing card: "<<card->GetName()<<endl;
+                        
+                        if(card->GetType() == CardType::Scheme)
+                        {
+                            SchemeContext schemecontext
+                            {
+                                CurrentPlayer,
+                                CurrentPlayer->GetHero(),
+                                *board.get(),
+                                *GameMap.get(),
+                                *movement.get(),
+                                &ActionsRemaining,
+                                view,
+                                OpponentPlayer
+                            };
+
+
+                            card->ApplyScheme(schemecontext);
+                            CurrentPlayer->DiscardCardFromHand(card.get());
+
+                            ActionsRemaining--;
+                            
+                            if(IsGameOver())
+                                exit(0);
+                        }
+                        else if(card->GetType() == CardType::Attack || card->GetType() == CardType::Versatile)
+                        {
+
+                            Hero* attacker = ChooseAttackerForCombat(card.get());
+                            Hero* defender = ChooseDefenderForCombat(attacker);
+
+                            view.display();
+
+                            combat->StartCombat(CurrentPlayer,  OpponentPlayer, attacker, defender, card.get());
+                            
+                            ActionsRemaining--;
+
+                            if(IsGameOver())
+                                exit(0);
+                        }
+
+
+                        // play card effect 
+                    
+
+                        break;
+                    }
+                            
+                    case 3:
+                            cout<<"Ending turn...\n";
+                            ActionsRemaining = 0;
+                        break;
+                    
+                    
+                    case 4:
+                        cout<<"Exit game successfully.\n";
+                        exit(0);        
+
+                    default:
+                        cout<<"Invalid choice!\n";
+                        break;
+            }
+
+
+    }
+
+    if(CurrentPlayer->GetHandSize() > 7)
+    {
+        cout<<"-----------------------------------------\n";
+        cout<<"You have more than 7 cards.\n";
+        int counter = -1;
+
+        while(CurrentPlayer->GetHandSize() > 0)
+        {
+            auto &hand = CurrentPlayer->GetHand();
+            cout << "Your hand:\n";
+
+            for(int i = 0; i < hand.size(); ++i)
+            {
+                cout<<i + 1<<") " <<hand[i]->GetName() <<"\t";
+
+                if((i+1) % 3 == 0)
+                    cout<<"\n";
+            }
+
+            
+            if(CurrentPlayer->GetHandSize() <= 7)
+            {
+                counter = hand.size() + 1;
+                cout<<endl<<counter<<") Stop discard your cards";
+            }
+
+            cout<<"\nChoose a card to discard: ";
+            int choice;
+            cin >> choice;
+
+            while(choice < 1 || choice > hand.size() + 1)
+            {
+                cout<<"Invalid choice. Enter again: ";
+                cin>>choice;
+            }
+
+            if(counter != -1 && choice == counter)
+                break;
+
+            CurrentPlayer->DiscardCardFromHand(hand[choice - 1].get());
+
+        }
+
+    
+    }
+
+
+
+}

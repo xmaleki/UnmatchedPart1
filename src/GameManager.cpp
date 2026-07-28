@@ -89,3 +89,68 @@ void GameManager::StartGame()
     
 }
 
+
+void GameManager::InitializeHeroes()
+{
+    cout<<"The younger player ["<<player1->GetName()<<"] should choose hero first.";
+    cout<<"\n1. Dracula\n2. Sherlock\n";
+    cout<<'"'<<player1->GetName()<<'"'<<" chose hero: ";
+ 
+    int choice;
+    
+    while(true)
+    {
+        cin >> choice;
+        if(choice <= 0 || choice > 2)
+        {
+            cout<<"Invalid choice.\nchoose hero: ";
+            continue;
+        }
+        else
+            break;
+    }
+
+    std::unique_ptr<Hero> hero1, hero2;
+    int Player1HeroId, Player2HeroId;
+
+    if(choice == 1)
+    {
+        hero1 = std::make_unique<Dracula>("Dracula", 1, HeroesTeam::DRACULA, 13, AttackType::MELEE, 13, CardOwner::Dracula);
+        Player1HeroId = 1;
+        hero2 = std::make_unique<Sherlock>("Holmes" , 5, HeroesTeam::SHERLOCK, 16, AttackType::MELEE, 16, CardOwner::SherlockHolmes);
+        Player2HeroId = 5;
+
+    }
+    else
+    {
+        hero1 = std::make_unique<Sherlock>("Holmes", 5, HeroesTeam::SHERLOCK, 16, AttackType::MELEE, 16, CardOwner::SherlockHolmes);
+        Player1HeroId = 5;
+        hero2 = std::make_unique<Dracula>("Dracula", 1, HeroesTeam::DRACULA, 13, AttackType::MELEE, 13, CardOwner::Dracula);
+        Player2HeroId = 1;
+    }
+
+    player1->SetHero(std::move(hero1), Player1HeroId);
+    player2->SetHero(std::move(hero2), Player2HeroId);
+    player1->InitializeDeck(player1->GetHero()->GetTeam());
+    player2->InitializeDeck(player2->GetHero()->GetTeam());
+    
+    player1->GetDeck()->Shuffle(player1->GetHero()->GetTeam());
+    player2->GetDeck()->Shuffle(player2->GetHero()->GetTeam());
+
+    if(player1->GetHero()->GetTeam() == HeroesTeam::DRACULA)
+    {
+        player1->SetSideKicks(make_unique<Sister>("Sister", 2, HeroesTeam::DRACULA, 1, AttackType::MELEE, 1, CardOwner::Sisters), 2);
+        player1->SetSideKicks(make_unique<Sister>("Sister", 3, HeroesTeam::DRACULA, 1, AttackType::MELEE, 1, CardOwner::Sisters), 3);
+        player1->SetSideKicks(make_unique<Sister>("Sister", 4, HeroesTeam::DRACULA, 1, AttackType::MELEE, 1, CardOwner::Sisters), 4);
+        player2->SetSideKicks(make_unique<Watson>("Watson", 6, HeroesTeam::SHERLOCK, 8, AttackType::RANGED, 8, CardOwner::DrWatson),6);
+    }
+    else
+    {
+        player1->SetSideKicks(make_unique<Watson>("Watson", 6, HeroesTeam::SHERLOCK, 8, AttackType::RANGED, 8, CardOwner::DrWatson), 6);
+        player2->SetSideKicks(make_unique<Sister>("Sister", 2, HeroesTeam::DRACULA, 1, AttackType::MELEE, 1, CardOwner::Sisters), 2);
+        player2->SetSideKicks(make_unique<Sister>("Sister", 3, HeroesTeam::DRACULA, 1, AttackType::MELEE, 1, CardOwner::Sisters), 3);
+        player2->SetSideKicks(make_unique<Sister>("Sister", 4, HeroesTeam::DRACULA, 1, AttackType::MELEE, 1, CardOwner::Sisters), 4);
+    }
+
+    cout<<"****************** Heroes and Sidekicks initialized successfully. ******************\n";
+}

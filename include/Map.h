@@ -1,5 +1,7 @@
 #pragma once
 #include <vector>
+#include "Space.h"
+#include "GameTypes.h"
 #include <memory>
 
 class Map
